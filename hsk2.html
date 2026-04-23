@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trung 你好 | Từ Vựng HSK 2</title>
+  <meta name="description" content="Học 150 từ vựng HSK 2 với flashcard 3D, bài kiểm tra và từ điển tra cứu. Miễn phí tại Trung 你好.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='2'><path d='M12 2L2 7l10 5 10-5-10-5z'/><path d='M2 17l10 5 10-5'/><path d='M2 12l10 5 10-5'/></svg>">
+  <script src="js/auth.js"></script>
+  <link rel="stylesheet" href="css/page.css">
+  <style>
+  body {
+    background-image:
+      radial-gradient(ellipse 60% 50% at 10% 0%,rgba(59,130,246,0.07),transparent 60%),
+      radial-gradient(ellipse 60% 50% at 90% 100%,rgba(236,72,153,0.05),transparent 60%);
+  }
+  /* HSK2: override tab active với blue */
+  .tab-btn.active {
+    background: linear-gradient(135deg,#2563eb,rgba(251,113,133,0.8));
+  }
+  .filter-btn.active {
+    background: linear-gradient(135deg,#2563eb,rgba(251,113,133,0.7));
+  }
+  .fc-pgfill { background: linear-gradient(90deg,#3b82f6,#fb7185); }
+  .card-hanzi {
+    background: linear-gradient(120deg,#2563eb,#fb7185);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    filter: drop-shadow(0 0 20px rgba(59,130,246,0.2));
+  }
+  .card-back { border-color: rgba(59,130,246,0.2); }
+  .card-type { color:#2563eb; background:rgba(59,130,246,0.08); }
+  .q-opt:hover { border-color:#3b82f6; background:rgba(59,130,246,0.06); }
+  .q-hanzi { background:linear-gradient(120deg,#2563eb,#fb7185); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .quiz-score-pill { border-color:rgba(59,130,246,0.2); color:#2563eb; background:rgba(59,130,246,0.06); }
+  .qpfill { background:linear-gradient(90deg,#3b82f6,#fb7185); }
+  .result-pct-text { background:linear-gradient(120deg,#2563eb,#fb7185); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .rbtn-fc { background:linear-gradient(135deg,#2563eb,#fb7185); }
+  .btn-primary { background:linear-gradient(135deg,#2563eb,#fb7185); }
+  .vocab-hanzi-sm { color:#2563eb; }
+  .hstat-purple { color:#2563eb; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="page-header">
+  <a href="index.html" class="header-brand">
+    <img src="assets/logo.png" alt="Logo" class="header-brand-img">
+    <span class="brand-name">Trung 你好</span>
+  </a>
+  <div class="header-stats">
+    <div class="hstat hstat-blue" id="h-known">✓ 0 thuộc</div>
+    <div class="hstat hstat-amber" id="h-progress">0%</div>
+    <div class="hstat hstat-teal">📚 150 từ</div>
+  </div>
+  <a href="index.html" class="back-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    Về App chính
+  </a>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge"> HSK 2 • Phiên bản chuẩn</div>
+  <h1 class="hero-title">
+    150 Từ Vựng<br>
+    <span>HSK Cấp 2</span>
+  </h1>
+  <p class="hero-subtitle">
+    Nâng cao vốn từ vựng tiếng Trung sau khi hoàn thành HSK 1.<br>
+    Học flashcard 3D, kiểm tra, tra cứu – tất cả trong một trang.
+  </p>
+  <div class="hero-actions">
+    <button class="btn-primary" onclick="switchTab('flashcard')"> Học Flashcard</button>
+    <button class="btn-secondary" onclick="switchTab('quiz')"> Kiểm tra ngay</button>
+    <button class="btn-secondary" onclick="switchTab('vocab')"> Xem từ điển</button>
+  </div>
+</section>
+
+<!-- MAIN -->
+<div class="main-content">
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" id="tab-flashcard" onclick="switchTab('flashcard')"> Flashcard</button>
+    <button class="tab-btn" id="tab-vocab" onclick="switchTab('vocab')"> Từ điển</button>
+    <button class="tab-btn" id="tab-quiz" onclick="switchTab('quiz')"> Kiểm tra</button>
+    <button class="tab-btn" id="tab-progress" onclick="switchTab('progress')"> Tiến trình</button>
+  </div>
+
+  <!-- FLASHCARD PANEL -->
+  <div class="tab-panel active" id="panel-flashcard">
+    <div class="fc-controls">
+      <div class="fc-filter" id="fc-filter"></div>
+      <div style="font-size:13px;color:var(--t2)">Click card để lật xem nghĩa</div>
+    </div>
+    <div class="fc-progress-row">
+      <span class="fc-pgtext" id="fc-pgtext"></span>
+      <div class="fc-pgbar"><div class="fc-pgfill" id="fc-pgfill" style="width:0%"></div></div>
+    </div>
+    <div class="fc-stage">
+      <button class="fc-nav" id="fc-prev" onclick="fcPrev()">‹</button>
+      <div class="card-wrap" onclick="flipCard()">
+        <div class="card-inner" id="card-inner">
+          <div class="card-face card-front">
+            <div class="card-badge" id="card-badge"></div>
+            <div class="card-hanzi" id="card-hanzi"></div>
+            <div class="card-hint">Nhấn để xem nghĩa</div>
+            <div class="card-flip-icon">↺</div>
+          </div>
+          <div class="card-face card-back">
+            <div class="card-pinyin" id="card-pinyin"></div>
+            <div class="card-type" id="card-type"></div>
+            <div class="card-meaning" id="card-meaning"></div>
+            <div class="card-example" id="card-example"></div>
+            <div class="card-flip-icon">↺</div>
+          </div>
+        </div>
+      </div>
+      <button class="fc-nav" id="fc-next" onclick="fcNext()">›</button>
+    </div>
+    <div class="fc-actions">
+      <button class="fc-btn btn-unknown" onclick="markCard(false)">✗ Chưa nhớ</button>
+      <button class="fc-btn btn-tts" onclick="speakCurrent()"> Nghe</button>
+      <button class="fc-btn btn-known" onclick="markCard(true)">✓ Nhớ rồi</button>
+    </div>
+  </div>
+
+  <!-- VOCAB PANEL -->
+  <div class="tab-panel" id="panel-vocab">
+    <div class="vocab-controls">
+      <div class="search-box">
+        <span></span>
+        <input type="text" class="search-input" id="vocab-search" placeholder="Tìm từ, pinyin, nghĩa..." oninput="renderVocab()">
+      </div>
+      <div class="vocab-filter-row" id="vocab-filter"></div>
+    </div>
+    <div class="vocab-grid" id="vocab-grid"></div>
+  </div>
+
+  <!-- QUIZ PANEL -->
+  <div class="tab-panel" id="panel-quiz">
+    <div class="quiz-wrap" id="quiz-wrap"></div>
+  </div>
+
+  <!-- PROGRESS PANEL -->
+  <div class="tab-panel" id="panel-progress">
+    <div class="progress-overview" id="progress-overview"></div>
+    <div class="type-progress" id="type-progress"></div>
+  </div>
+</div>
+
+<script src="js/hsk2_data.js"></script>
+<script>
+// ============================================================
+// HSK2 Page Logic
+// ============================================================
+
+const STORAGE_KEY = 'nhim_hsk2_known';
+
+function loadKnown() {
+  try { return new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')); }
+  catch { return new Set(); }
+}
+function saveKnown(s) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify([...s]));
+}
+let known = loadKnown();
+
+// Types for filtering
+const ALL_TYPES = [...new Set(HSK2_VOCABULARY.map(w => w.type))];
+const TYPE_COLORS = {
+  'đại từ':'#a78bfa','từ hỏi':'#60a5fa','số đếm':'#fbbf24','thời gian':'#34d399',
+  'danh từ':'#f472b6','động từ':'#fb923c','tính từ':'#4ade80','phó từ':'#38bdf8',
+  'liên từ':'#e879f9','chào hỏi':'#f9a8d4','địa danh':'#6ee7b7','lượng từ':'#fde68a',
+  'giới từ':'#93c5fd','trợ từ':'#d8b4fe','động từ/danh từ':'#fb923c'
+};
+
+function updateHeaderStats() {
+  document.getElementById('h-known').textContent = `✓ ${known.size} thuộc`;
+  document.getElementById('h-progress').textContent = Math.round(known.size / HSK2_VOCABULARY.length * 100) + '%';
+}
+
+// ---- TABS ----
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
+  if (name === 'vocab') renderVocab();
+  if (name === 'quiz') initQuiz();
+  if (name === 'progress') renderProgress();
+}
+
+// ============================================================
+// FLASHCARD
+// ============================================================
+let fcWords = [...HSK2_VOCABULARY];
+let fcIdx = 0;
+let fcFilter = 'all';
+let isFlipped = false;
+
+function getFilteredWords() {
+  if (fcFilter === 'all') return [...HSK2_VOCABULARY];
+  if (fcFilter === 'unknown') return HSK2_VOCABULARY.filter(w => !known.has(w.id));
+  if (fcFilter === 'known') return HSK2_VOCABULARY.filter(w => known.has(w.id));
+  return HSK2_VOCABULARY.filter(w => w.type === fcFilter);
+}
+
+function initFC() {
+  const fil = document.getElementById('fc-filter');
+  const filters = [
+    {key:'all',label:' Tất cả'},
+    {key:'unknown',label:' Chưa thuộc'},
+    {key:'known',label:'✓ Đã thuộc'},
+    ...ALL_TYPES.map(t => ({key:t,label:t}))
+  ];
+  fil.innerHTML = filters.map(f =>
+    `<button class="filter-btn ${f.key === 'all' ? 'active' : ''}" onclick="setFcFilter('${f.key}',this)">${f.label}</button>`
+  ).join('');
+  fcWords = getFilteredWords();
+  fcIdx = 0;
+  renderCard();
+}
+
+function setFcFilter(key, btn) {
+  fcFilter = key;
+  document.querySelectorAll('#fc-filter .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  fcWords = getFilteredWords();
+  fcIdx = 0;
+  isFlipped = false;
+  document.getElementById('card-inner').classList.remove('flipped');
+  renderCard();
+}
+
+function renderCard() {
+  if (!fcWords.length) {
+    document.getElementById('fc-pgtext').textContent = 'Không có từ';
+    document.getElementById('fc-pgfill').style.width = '0%';
+    document.getElementById('card-hanzi').textContent = '';
+    document.getElementById('card-badge').textContent = 'Hoàn thành!';
+    document.getElementById('card-pinyin').textContent = '';
+    document.getElementById('card-meaning').textContent = 'Bộ này trống!';
+    document.getElementById('card-example').textContent = '';
+    return;
+  }
+  const w = fcWords[fcIdx];
+  const pct = ((fcIdx + 1) / fcWords.length * 100).toFixed(0);
+  document.getElementById('fc-pgtext').textContent = `${fcIdx + 1} / ${fcWords.length}`;
+  document.getElementById('fc-pgfill').style.width = pct + '%';
+  document.getElementById('card-badge').textContent = w.type;
+  document.getElementById('card-hanzi').textContent = w.hanzi;
+  document.getElementById('card-pinyin').textContent = w.pinyin;
+  document.getElementById('card-type').textContent = w.type;
+  document.getElementById('card-meaning').textContent = w.meaning;
+  document.getElementById('card-example').textContent = w.example || '';
+  document.getElementById('fc-prev').disabled = fcIdx === 0;
+  document.getElementById('fc-next').disabled = fcIdx === fcWords.length - 1;
+}
+
+function flipCard() {
+  isFlipped = !isFlipped;
+  document.getElementById('card-inner').classList.toggle('flipped', isFlipped);
+}
+
+function fcPrev() {
+  if (fcIdx > 0) { fcIdx--; isFlipped=false; document.getElementById('card-inner').classList.remove('flipped'); renderCard(); }
+}
+function fcNext() {
+  if (fcIdx < fcWords.length - 1) { fcIdx++; isFlipped=false; document.getElementById('card-inner').classList.remove('flipped'); renderCard(); }
+}
+
+function markCard(isKnown) {
+  const w = fcWords[fcIdx];
+  if (isKnown) known.add(w.id); else known.delete(w.id);
+  saveKnown(known);
+  updateHeaderStats();
+  if (fcIdx < fcWords.length - 1) fcNext();
+  else renderCard();
+}
+
+function speakCurrent() {
+  const w = fcWords[fcIdx];
+  if (!w) return;
+  const u = new SpeechSynthesisUtterance(w.hanzi);
+  u.lang = 'zh-CN'; u.rate = 0.8;
+  window.speechSynthesis.speak(u);
+}
+
+// ============================================================
+// TỪ ĐIỂN
+// ============================================================
+let vocabFilter = 'all';
+let expandedId = null;
+
+function initVocabFilter() {
+  const row = document.getElementById('vocab-filter');
+  row.innerHTML = [
+    `<button class="filter-btn active" onclick="setVocabFilter('all',this)">Tất cả</button>`,
+    ...ALL_TYPES.map(t => `<button class="filter-btn" onclick="setVocabFilter('${t}',this)">${t}</button>`)
+  ].join('');
+}
+
+function setVocabFilter(type, btn) {
+  vocabFilter = type;
+  document.querySelectorAll('#vocab-filter .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderVocab();
+}
+
+function renderVocab() {
+  const q = (document.getElementById('vocab-search')?.value || '').toLowerCase();
+  let words = HSK2_VOCABULARY;
+  if (vocabFilter !== 'all') words = words.filter(w => w.type === vocabFilter);
+  if (q) words = words.filter(w =>
+    w.hanzi.includes(q) || w.pinyin.toLowerCase().includes(q) ||
+    w.meaning.toLowerCase().includes(q)
+  );
+  const grid = document.getElementById('vocab-grid');
+  if (!words.length) { grid.innerHTML = '<div class="no-results"> Không tìm thấy từ nào</div>'; return; }
+  grid.innerHTML = words.map(w => {
+    const isExpanded = expandedId === w.id;
+    const isKnown = known.has(w.id);
+    return `
+      <div class="vocab-card ${isExpanded ? 'expanded' : ''} ${isKnown ? 'vocab-known' : ''}"
+           id="vc-${w.id}" onclick="toggleExpand(${w.id})">
+        <div class="vocab-card-main">
+          <span class="vocab-num">${w.id}</span>
+          <span class="vocab-hanzi-sm">${w.hanzi}</span>
+          <div class="vocab-info">
+            <div class="vocab-pinyin-sm">${w.pinyin}</div>
+            <div class="vocab-meaning-sm">${w.meaning}</div>
+          </div>
+          <span class="vocab-type-badge" style="color:${TYPE_COLORS[w.type]||'var(--t3)'}">${w.type}</span>
+          <button class="vocab-tts-btn" onclick="event.stopPropagation();speakWord('${w.hanzi}')" title="Nghe phát âm"></button>
+        </div>
+        ${isExpanded ? `<div class="vocab-card-detail"> ${w.example}</div>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+function toggleExpand(id) {
+  expandedId = expandedId === id ? null : id;
+  renderVocab();
+}
+
+function speakWord(hanzi) {
+  const u = new SpeechSynthesisUtterance(hanzi);
+  u.lang = 'zh-CN'; u.rate = 0.8;
+  window.speechSynthesis.speak(u);
+}
+
+// ============================================================
+// QUIZ
+// ============================================================
+let quizState = null;
+
+function initQuiz() {
+  const words = [...HSK2_VOCABULARY].sort(() => Math.random() - 0.5).slice(0, 20);
+  quizState = { words, idx: 0, score: 0, answered: false };
+  renderQuiz();
+}
+
+function renderQuiz() {
+  const wrap = document.getElementById('quiz-wrap');
+  const { words, idx, score, answered } = quizState;
+
+  if (idx >= words.length) { renderQuizResult(); return; }
+  const q = words[idx];
+  const pct = (idx / words.length * 100).toFixed(0);
+
+  const wrong = HSK2_VOCABULARY
+    .filter(w => w.id !== q.id)
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 3);
+  const opts = [...wrong, q].sort(() => Math.random() - 0.5);
+
+  wrap.innerHTML = `
+    <div class="quiz-header-row">
+      <div style="font-size:13px;color:var(--t2)">Câu <strong>${idx + 1}</strong>/${words.length}</div>
+      <div class="quiz-score-pill"> ${score} điểm</div>
+    </div>
+    <div class="qpbar"><div class="qpfill" style="width:${pct}%"></div></div>
+    <div class="q-card">
+      <div class="q-meta">Chọn nghĩa đúng của từ sau:</div>
+      <div class="q-hanzi">${q.hanzi}</div>
+      <div class="q-pinyin">${q.pinyin}</div>
+      <div class="q-options">
+        ${opts.map((o,i) => `
+          <button class="q-opt" id="qopt-${o.id}" onclick="answerQuiz(${o.id},${q.id})">
+            <span class="opt-l">${'ABCD'[i]}</span>
+            ${o.meaning}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function answerQuiz(selectedId, correctId) {
+  if (quizState.answered) return;
+  quizState.answered = true;
+  const isCorrect = selectedId === correctId;
+  if (isCorrect) quizState.score++;
+  document.querySelectorAll('.q-opt').forEach(btn => {
+    const id = parseInt(btn.id.replace('qopt-',''));
+    btn.style.pointerEvents = 'none';
+    if (id === correctId) btn.classList.add('correct');
+    else if (id === selectedId) btn.classList.add('wrong');
+  });
+  setTimeout(() => {
+    quizState.idx++;
+    quizState.answered = false;
+    renderQuiz();
+  }, 900);
+}
+
+function renderQuizResult() {
+  const { score, words } = quizState;
+  const pct = Math.round(score / words.length * 100);
+  const emoji = pct >= 90 ? '' : pct >= 70 ? '' : pct >= 50 ? '' : '';
+  const msg = pct >= 90 ? 'Xuất sắc! 你太棒了！' : pct >= 70 ? 'Tốt lắm! 加油！' : pct >= 50 ? 'Cố lên nhé! 继续努力！' : 'Ôn thêm nhé! 再学一遍！';
+  document.getElementById('quiz-wrap').innerHTML = `
+    <div class="result-box">
+      <div class="result-emoji">${emoji}</div>
+      <div class="result-pct-text">${pct}%</div>
+      <div style="font-size:15px;color:var(--t2)">${score}/${words.length} câu đúng</div>
+      <div class="result-msg">${msg}</div>
+      <div class="result-btns">
+        <button class="result-btn rbtn-retry" onclick="initQuiz()"> Làm lại</button>
+        <button class="result-btn rbtn-fc" onclick="switchTab('flashcard')"> Ôn Flashcard</button>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================
+// PROGRESS
+// ============================================================
+function renderProgress() {
+  const total = HSK2_VOCABULARY.length;
+  const knownCount = known.size;
+  const unknownCount = total - knownCount;
+  const pct = Math.round(knownCount / total * 100);
+
+  document.getElementById('progress-overview').innerHTML = `
+    <div class="pov-card">
+      <div class="pov-icon"></div>
+      <div class="pov-val pv-blue">${total}</div>
+      <div class="pov-label">Tổng từ HSK2</div>
+    </div>
+    <div class="pov-card">
+      <div class="pov-icon"></div>
+      <div class="pov-val pv-teal">${knownCount}</div>
+      <div class="pov-label">Đã thuộc</div>
+    </div>
+    <div class="pov-card">
+      <div class="pov-icon"></div>
+      <div class="pov-val pv-amber">${unknownCount}</div>
+      <div class="pov-label">Chưa thuộc</div>
+    </div>
+    <div class="pov-card">
+      <div class="pov-icon"></div>
+      <div class="pov-val pv-purple">${pct}%</div>
+      <div class="pov-label">Hoàn thành</div>
+    </div>
+  `;
+
+  const typeMap = {};
+  HSK2_VOCABULARY.forEach(w => {
+    if (!typeMap[w.type]) typeMap[w.type] = { total: 0, known: 0 };
+    typeMap[w.type].total++;
+    if (known.has(w.id)) typeMap[w.type].known++;
+  });
+
+  document.getElementById('type-progress').innerHTML = `
+    <div style="font-size:15px;font-weight:700;margin-bottom:16px;color:var(--t1)"> Tiến trình theo loại từ</div>
+    ${Object.entries(typeMap).map(([type, {total, known: k}]) => {
+      const p = Math.round(k / total * 100);
+      const color = TYPE_COLORS[type] || '#60a5fa';
+      return `
+        <div class="type-row">
+          <div class="type-label">
+            <span style="color:${color}">${type}</span>
+            <span>${k}/${total} (${p}%)</span>
+          </div>
+          <div class="type-bar">
+            <div class="type-fill" style="width:${p}%;background:${color}"></div>
+          </div>
+        </div>
+      `;
+    }).join('')}
+    <div style="margin-top:20px;text-align:center">
+      <button class="btn-secondary" onclick="if(confirm('Reset toàn bộ tiến trình HSK2?')){known=new Set();saveKnown(known);updateHeaderStats();renderProgress()}">
+         Reset tiến trình
+      </button>
+    </div>
+  `;
+}
+
+// ============================================================
+// INIT
+// ============================================================
+initFC();
+initVocabFilter();
+renderVocab();
+updateHeaderStats();
+
+// Keyboard navigation
+document.addEventListener('keydown', e => {
+  const panel = document.querySelector('.tab-panel.active');
+  if (!panel) return;
+  if (panel.id === 'panel-flashcard') {
+    if (e.key === 'ArrowLeft') fcPrev();
+    if (e.key === 'ArrowRight') fcNext();
+    if (e.key === ' ') { e.preventDefault(); flipCard(); }
+    if (e.key === 'k' || e.key === 'K') markCard(true);
+    if (e.key === 'u' || e.key === 'U') markCard(false);
+    if (e.key === 's' || e.key === 'S') speakCurrent();
+  }
+});
+</script>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="app-footer">
+      <div class="footer-container">
+        <div class="footer-links">
+          <a href="mailto:Trungho20050@gmail.com" class="footer-link">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            Email: Trungho20050@gmail.com
+          </a>
+          <a href="tel:0345822179" class="footer-link">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            SĐT: 0345822179
+          </a>
+          <a href="https://www.facebook.com/trungthanhho2005" target="_blank" rel="noopener" class="footer-link">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+            Facebook
+          </a>
+          <a href="https://www.youtube.com/@trungh.t95" target="_blank" rel="noopener" class="footer-link">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33 2.78 2.78 0 0 0 1.94 2c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>
+            Youtube
+          </a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        &copy; 2026 Trung 你好. Nền tảng học tiếng Trung.
+      </div>
+    </footer>
+
+</body>
+</html>

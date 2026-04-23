@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trung 你好 | Đăng Nhập</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'></text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/auth.js"></script>
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    .auth-bg-decor {
+      position: absolute; width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(124,58,237,0.15) 0%, transparent 70%);
+      top: -20%; left: -10%; z-index: -1; animation: float 10s ease-in-out infinite alternate;
+    }
+    .auth-bg-decor2 {
+      position: absolute; width: 500px; height: 500px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(52,211,153,0.1) 0%, transparent 70%);
+      bottom: -20%; right: -10%; z-index: -1; animation: float 8s ease-in-out infinite alternate-reverse;
+    }
+    @keyframes float {
+      0% { transform: translateY(0) scale(1); }
+      100% { transform: translateY(-40px) scale(1.1); }
+    }
+    .auth-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--border);
+      border-radius: var(--r4);
+      padding: 42px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 24px 80px rgba(100,60,200,0.15);
+      position: relative;
+      z-index: 10;
+    }
+    .auth-header { text-align: center; margin-bottom: 28px; }
+    .auth-logo { width: 56px; height: 56px; margin: 0 auto 12px; background: linear-gradient(135deg, var(--purple-d), var(--teal)); border-radius: 18px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(124,58,237,0.25); }
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+    .auth-title { font-size: 24px; font-weight: 800; color: var(--t1); margin-bottom: 4px; }
+    .auth-subtitle { font-size: 14px; color: var(--t2); }
+    
+    .auth-form { display: flex; flex-direction: column; gap: 16px; }
+    .input-grp { display: flex; flex-direction: column; gap: 6px; }
+    .input-grp label { font-size: 12.5px; font-weight: 600; color: var(--t2); }
+    .input-grp input {
+      padding: 14px 16px; background: rgba(124,58,237,0.04);
+      border: 1px solid var(--border2); border-radius: var(--r2);
+      color: var(--t1); font-size: 14px; font-family: inherit; transition: var(--tr); outline: none;
+    }
+    .input-grp input:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(124,58,237,0.15); }
+    
+    .auth-btn {
+      margin-top: 8px; padding: 14px; border-radius: var(--r2); border: none;
+      background: linear-gradient(135deg, var(--purple-d), rgba(52,211,153,0.7));
+      color: #fff; font-size: 15px; font-weight: 700; cursor: pointer;
+      font-family: inherit; transition: var(--tr);
+    }
+    .auth-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(124,58,237,0.4); }
+    
+    .auth-toggle {
+      text-align: center; margin-top: 24px; font-size: 13.5px; color: var(--t3);
+    }
+    .auth-toggle a { color: var(--purple); text-decoration: none; font-weight: 600; cursor: pointer; transition: var(--tr); }
+    .auth-toggle a:hover { color: var(--teal); text-decoration: underline; }
+    
+    .error-msg {
+      background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.3);
+      color: var(--red); padding: 12px; border-radius: var(--r1);
+      font-size: 13px; font-weight: 500; text-align: center; display: none; margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="auth-bg-decor"></div>
+  <div class="auth-bg-decor2"></div>
+
+  <div class="auth-card">
+    <!-- KHUNG ĐĂNG NHẬP / ĐĂNG KÝ -->
+    <div id="login-container">
+      <div class="auth-header">
+        <img src="assets/logo.png" alt="Logo" style="width:160px; height:160px; object-fit:cover; border-radius:50%; border:3px solid white; box-shadow:0 8px 24px rgba(236,72,153,0.3); margin-bottom:12px;">
+        <h1 class="auth-title">Trung 你好</h1>
+        <p class="auth-subtitle" id="form-subtitle">Đăng nhập để tiếp tục học Tiếng Trung</p>
+      </div>
+
+      <div class="error-msg" id="error-msg">Email hoặc mật khẩu chưa chính xác.</div>
+
+      <form class="auth-form" id="auth-form">
+        <div class="input-grp" id="name-grp" style="display: none;">
+          <label>Họ và Tên</label>
+          <input type="text" id="name" placeholder="Nguyễn Văn A">
+        </div>
+        <div class="input-grp" id="uni-grp" style="display: none;">
+          <label>Trường Đại học</label>
+          <input type="text" id="university" placeholder="ĐH Quốc gia Hà Nội">
+        </div>
+        <div class="input-grp">
+          <label>Email đăng nhập</label>
+          <input type="email" id="email" placeholder="example@gmail.com" required>
+        </div>
+        <div class="input-grp">
+          <label>Mật khẩu</label>
+          <input type="password" id="password" placeholder="••••••••" required>
+        </div>
+        
+        <div style="text-align:right; margin-top:-8px; margin-bottom: 4px;" id="forgot-link-container">
+          <a onclick="showForgotForm()" style="font-size: 13px; color: var(--purple); text-decoration: none; font-weight: 500; cursor: pointer;">Quên mật khẩu?</a>
+        </div>
+
+        <button type="submit" class="auth-btn" id="submit-btn" style="margin-top: 10px;">Đăng Nhập</button>
+      </form>
+
+      <div class="auth-toggle">
+        <span id="toggle-text">Chưa có tài khoản?</span> 
+        <a onclick="toggleMode()" id="toggle-link" style="cursor:pointer;">Đăng ký ngay</a>
+      </div>
+    </div>
+
+    <!-- KHUNG QUÊN MẬT KHẨU -->
+    <div id="forgot-container" style="display: none;">
+      <div class="auth-header">
+        <div class="auth-logo">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <h1 class="auth-title">Khôi Phục Mật Khẩu</h1>
+        <p class="auth-subtitle" id="forgot-subtitle">Nhập email của bạn để nhận mã OTP</p>
+      </div>
+
+      <div class="error-msg" id="forgot-error-msg"></div>
+
+      <form class="auth-form" id="forgot-form" onsubmit="event.preventDefault();">
+        <div class="input-grp" id="forgot-email-grp">
+          <label>Email đăng nhập</label>
+          <input type="email" id="forgot-email" placeholder="example@gmail.com" required>
+        </div>
+        
+        <div class="input-grp" id="forgot-otp-grp" style="display: none;">
+          <label>Mã xác thực OTP (6 số)</label>
+          <input type="text" id="forgot-otp" placeholder="123456" maxlength="6">
+        </div>
+        
+        <div class="input-grp" id="forgot-newpass-grp" style="display: none;">
+          <label>Mật khẩu mới</label>
+          <input type="password" id="forgot-newpass" placeholder="••••••••">
+        </div>
+
+        <button type="button" class="auth-btn" id="forgot-send-btn" onclick="requestOTP()" style="margin-top: 10px;">Gửi Mã OTP</button>
+        <button type="button" class="auth-btn" id="forgot-submit-btn" onclick="submitReset()" style="margin-top: 10px; display: none; background: linear-gradient(135deg, #10b981, #059669);">Xác Nhận Đổi Mật Khẩu</button>
+      </form>
+
+      <div class="auth-toggle">
+        <a onclick="showLoginForm()" id="forgot-back-link" style="cursor:pointer;"> Quay lại đăng nhập</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let isRegister = false;
+    
+    function showLoginForm() {
+      document.getElementById('forgot-container').style.display = 'none';
+      document.getElementById('login-container').style.display = 'block';
+    }
+
+    function showForgotForm() {
+      document.getElementById('login-container').style.display = 'none';
+      document.getElementById('forgot-container').style.display = 'block';
+      // Reset forgot form states
+      document.getElementById('forgot-email-grp').style.display = 'flex';
+      document.getElementById('forgot-otp-grp').style.display = 'none';
+      document.getElementById('forgot-newpass-grp').style.display = 'none';
+      document.getElementById('forgot-send-btn').style.display = 'block';
+      document.getElementById('forgot-submit-btn').style.display = 'none';
+      document.getElementById('forgot-subtitle').textContent = 'Nhập email của bạn để nhận mã OTP';
+      document.getElementById('forgot-error-msg').style.display = 'none';
+      document.getElementById('forgot-email').disabled = false;
+      document.getElementById('forgot-form').reset();
+    }
+
+    async function requestOTP() {
+      const email = document.getElementById('forgot-email').value.trim();
+      const errorEl = document.getElementById('forgot-error-msg');
+      const sendBtn = document.getElementById('forgot-send-btn');
+
+      if (!email) {
+        errorEl.textContent = 'Vui lòng nhập Email.';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      errorEl.style.display = 'none';
+      sendBtn.disabled = true;
+      sendBtn.textContent = 'Đang kiểm tra...';
+
+      try {
+        const response = await fetch('/api/auth/forgot-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+        const data = await response.json();
+
+        if (!response.ok) throw new Error(data.error);
+
+        // Hiển thị Giả lập OTP (Mock Email)
+        alert(`GIẢ LẬP HỘP THƯ EMAIL:\n\nMã xác thực OTP của bạn là: ${data.defaultOTP}\n(Có hiệu lực trong 15 phút)`);
+
+        // Chuyển sang bước nhập OTP
+        document.getElementById('forgot-email').disabled = true; // Khóa email không cho đổi
+        document.getElementById('forgot-otp-grp').style.display = 'flex';
+        document.getElementById('forgot-newpass-grp').style.display = 'flex';
+        document.getElementById('forgot-send-btn').style.display = 'none';
+        document.getElementById('forgot-submit-btn').style.display = 'block';
+        document.getElementById('forgot-subtitle').textContent = 'Mã OTP đã được gửi vào Email!';
+
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.style.display = 'block';
+      } finally {
+        sendBtn.disabled = false;
+        sendBtn.textContent = 'Gửi Mã OTP';
+      }
+    }
+
+    async function submitReset() {
+      const email = document.getElementById('forgot-email').value.trim();
+      const otp = document.getElementById('forgot-otp').value.trim();
+      const newPassword = document.getElementById('forgot-newpass').value.trim();
+      const errorEl = document.getElementById('forgot-error-msg');
+      const submitBtn = document.getElementById('forgot-submit-btn');
+
+      if (!otp || !newPassword) {
+        errorEl.textContent = 'Vui lòng điền đủ mã OTP và Mật khẩu mới.';
+        errorEl.style.display = 'block'; return;
+      }
+      if (newPassword.length < 6) {
+        errorEl.textContent = 'Mật khẩu phải từ 6 ký tự.';
+        errorEl.style.display = 'block'; return;
+      }
+
+      errorEl.style.display = 'none';
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Đang xử lý...';
+
+      try {
+        const response = await fetch('/api/auth/reset-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, otp, newPassword })
+        });
+        const data = await response.json();
+
+        if (!response.ok) throw new Error(data.error);
+
+        alert('Đổi mật khẩu thành công! Bạn có thể đăng nhập bằng mật khẩu mới.');
+        showLoginForm();
+      } catch(err) {
+        errorEl.textContent = err.message;
+        errorEl.style.display = 'block';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Xác Nhận Đổi Mật Khẩu';
+      }
+    }
+
+    function toggleMode() {
+      isRegister = !isRegister;
+      document.getElementById('name-grp').style.display = isRegister ? 'flex' : 'none';
+      document.getElementById('uni-grp').style.display = isRegister ? 'flex' : 'none';
+      document.getElementById('name').required = isRegister;
+      document.getElementById('submit-btn').textContent = isRegister ? 'Đăng Ký Tài Khoản' : 'Đăng Nhập';
+      document.getElementById('form-subtitle').textContent = isRegister ? 'Tạo tài khoản học Tiếng Trung AI miễn phí' : 'Đăng nhập để tiếp tục học Tiếng Trung';
+      document.getElementById('toggle-text').textContent = isRegister ? 'Đã có tài khoản?' : 'Chưa có tài khoản?';
+      document.getElementById('toggle-link').textContent = isRegister ? 'Đăng nhập' : 'Đăng ký ngay';
+      document.getElementById('forgot-link-container').style.display = isRegister ? 'none' : 'block';
+      document.getElementById('error-msg').style.display = 'none';
+    }
+
+    document.getElementById('auth-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const fullName = document.getElementById('name').value.trim() || email.split('@')[0];
+      const university = document.getElementById('university').value.trim();
+      
+      const errorEl = document.getElementById('error-msg');
+      const submitBtn = document.getElementById('submit-btn');
+
+      if (password.length < 6) {
+        errorEl.textContent = 'Mật khẩu phải từ 6 ký tự trở lên.';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Đang xử lý...';
+      errorEl.style.display = 'none';
+
+      try {
+        const endpoint = isRegister ? '/api/auth/register' : '/api/auth/login';
+        const bodyData = isRegister 
+          ? { fullName, email, password, university } 
+          : { email, password };
+
+        const response = await fetch(`${endpoint}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bodyData)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Có lỗi xảy ra, vui lòng thử lại.');
+        }
+
+        // Đăng nhập/Đăng ký thành công
+        localStorage.setItem('nhim_user', JSON.stringify({
+          id: data.user.Id,
+          name: data.user.FullName,
+          email: data.user.Email,
+          university: data.user.University,
+          level: data.user.HskLevel,
+          role: data.user.Role || 'User'
+        }));
+        
+        if(!localStorage.getItem('nhim_streak')) localStorage.setItem('nhim_streak', '0');
+        
+        window.location.href = 'index.html';
+
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.style.display = 'block';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = isRegister ? 'Đăng Ký Tài Khoản' : 'Đăng Nhập';
+      }
+    });
+
+    // Check if user accidentally navigated to login but is already authenticated  
+    if(localStorage.getItem('nhim_user')) {
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>
