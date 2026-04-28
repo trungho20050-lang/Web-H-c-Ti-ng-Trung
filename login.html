@@ -49,6 +49,18 @@
     }
     .input-grp input:focus { border-color:var(--purple); box-shadow:0 0 0 3px rgba(236,72,153,0.12); }
 
+    /* Password toggle wrapper */
+    .pass-wrap { position:relative; display:flex; align-items:center; }
+    .pass-wrap input { flex:1; padding-right:44px !important; }
+    .pass-toggle {
+      position:absolute; right:12px; top:50%; transform:translateY(-50%);
+      background:none; border:none; cursor:pointer; padding:4px;
+      color:var(--t3); transition:color 0.2s; line-height:1;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .pass-toggle:hover { color:var(--purple); }
+    .pass-toggle svg { width:20px; height:20px; pointer-events:none; }
+
     /* OTP input đặc biệt */
     .otp-input {
       text-align:center; font-size:28px; font-weight:800; letter-spacing:10px;
@@ -131,7 +143,12 @@
         </div>
         <div class="input-grp">
           <label>Mật khẩu</label>
-          <input type="password" id="login-password" placeholder="••••••••" required>
+          <div class="pass-wrap">
+            <input type="password" id="login-password" placeholder="••••••••" required>
+            <button type="button" class="pass-toggle" onclick="togglePassword('login-password', this)" title="Hiện/Ẩn mật khẩu" aria-label="Hiện hoặc ẩn mật khẩu">
+              <svg id="icon-login-password" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
         </div>
         <div style="text-align:right;margin-top:-6px;">
           <a onclick="showPanel('panel-forgot')" style="font-size:13px;color:var(--purple);cursor:pointer;font-weight:500;">Quên mật khẩu?</a>
@@ -166,7 +183,12 @@
         </div>
         <div class="input-grp">
           <label>Mật khẩu (ít nhất 6 ký tự)</label>
-          <input type="password" id="reg-password" placeholder="••••••••" required>
+          <div class="pass-wrap">
+            <input type="password" id="reg-password" placeholder="••••••••" required>
+            <button type="button" class="pass-toggle" onclick="togglePassword('reg-password', this)" title="Hiện/Ẩn mật khẩu" aria-label="Hiện hoặc ẩn mật khẩu">
+              <svg id="icon-reg-password" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
         </div>
         <div class="input-grp">
           <label>Trường Đại học <span style="color:var(--t3);font-weight:400;">(tuỳ chọn)</span></label>
@@ -248,7 +270,12 @@
         </div>
         <div class="input-grp">
           <label>Mật khẩu mới</label>
-          <input type="password" id="forgot-newpass" placeholder="••••••••">
+          <div class="pass-wrap">
+            <input type="password" id="forgot-newpass" placeholder="••••••••">
+            <button type="button" class="pass-toggle" onclick="togglePassword('forgot-newpass', this)" title="Hiện/Ẩn mật khẩu" aria-label="Hiện hoặc ẩn mật khẩu">
+              <svg id="icon-forgot-newpass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
         </div>
         <button class="auth-btn green" onclick="submitReset()" id="forgot-reset-btn">
           ✅ Đổi Mật Khẩu
@@ -481,6 +508,24 @@
     document.getElementById('reg-otp').addEventListener('input', (e) => {
       if (e.target.value.length === 6) verifyRegisterOTP();
     });
+
+    // ── Toggle hiện/ẩn mật khẩu ──
+    const EYE_OPEN  = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+    const EYE_CLOSE = `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>`;
+
+    function togglePassword(inputId, btn) {
+      const input = document.getElementById(inputId);
+      const svg   = btn.querySelector('svg');
+      if (input.type === 'password') {
+        input.type = 'text';
+        svg.innerHTML = EYE_CLOSE;
+        btn.title = 'Ẩn mật khẩu';
+      } else {
+        input.type = 'password';
+        svg.innerHTML = EYE_OPEN;
+        btn.title = 'Hiện mật khẩu';
+      }
+    }
   </script>
 </body>
 </html>
